@@ -15,7 +15,7 @@ class Race
     {
         $this->setTrack();
         $this->setCars($carsQuantity);
-        $this->setRaceResult();
+        $this->raceResult = new RaceResult;
     }
 
     public function setTrack(){
@@ -28,21 +28,48 @@ class Race
         }
     }
 
-    public function setRaceResult(){
-        $this->raceResult = new RaceResult;
-    }
-
     public function runRace(){
         
-        $this->raceResult = new RaceResult;
         $step = 0;
         $raceFinished = false;
         
         while(!$raceFinished){
 
+            $carsPositions = [];
+
+            foreach($this->cars as $car){
+                $ce = $car->currentElement;
+                $nextMove = $ce + 1;
+                $trackSegment = ceil($nextMove / $this->track->elementsSeries) - 1;
+                $trackSegmentType = $this->track->track[$trackSegment];
+                $nextTrackSegmentType = $this->track->track[$trackSegment + 1];
+                $usedSpeed = $car->speeds[$trackSegmentType];
+                $trackSeries = $this->track->elementsSeries;
+
+                $trackSegmentPosition = $ce/$trackSeries;
+                $remainingSegmentElements = (ceil($trackSegmentPosition) - $trackSegmentPosition) * $trackSeries;
+
+                if($remainingSegmentElements >= $usedSpeed || $trackSegmentType == $nextTrackSegmentType){
+                    $car->currentElement += $usedSpeed;
+                }else{
+                    $car->currentElement += $remainingSegmentElements + 1;
+                }
+
+                if($car->currentElement >= $this->track->trackElements){
+                    $car->currentElement = $this->track->trackElements;
+                    $raceFinished = true;
+                }
+
+                $carsPositions[] = $car->currentElement;
+
+            }
+
+            $roundResult = new RoundResult($step, $carsPositions);
+
+            $this->raceResult->setRoundResult($roundResult);
 
             $step++;
-            $raceFinished = true;
+
         }
 
         return $this->raceResult;

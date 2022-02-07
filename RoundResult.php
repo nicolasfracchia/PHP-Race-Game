@@ -11,7 +11,7 @@ class RoundResult
     /**
      * @var array
      */
-    public $carsPosition; // POSITION ON THE TRACK, NOT THE ORDER!
+    public $carsPosition;
 
     public function __construct(int $step, array $carsPosition)
     {
