@@ -22,9 +22,9 @@ class Race
         $this->track = new Track;
     }
 
-    public function setCars($carsQuantity){
-        for($i = 0; $i < $carsQuantity; $i++){
-            $this->cars[] = new Cars(count($this->track->elementTypes));
+    public function setCars(){
+        for($i = 0; $i < 5; $i++){
+            $this->cars[] = new Cars();
         }
     }
 
@@ -39,7 +39,7 @@ class Race
             foreach($this->cars as $car){
                 $newPosition = $car->setNewPosition($this->track);
 
-                if($newPosition == $this->track->trackElements){
+                if($newPosition == 2000){
                     $raceFinished = true;
                 }
 

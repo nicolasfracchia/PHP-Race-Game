@@ -2,45 +2,29 @@
 
 class Cars
 {
-    public int $elementTypes;
-    public int $speedSum;
-    public int $minSpeed;
     public array $speeds;
     public int $currentElement = 0;
     
-    public function __construct($elementTypes, $speedSum = 22, $minSpeed = 4){
-        $this->elementTypes = $elementTypes;
-        $this->speedSum = $speedSum;
-        $this->minSpeed = $minSpeed;
+    public function __construct(){
         $this->setSpeeds();
     }
 
-    public function setSpeeds(){
-
-        $maxSpeed = $this->speedSum - $this->minSpeed * ($this->elementTypes - 1);
-
-        for($i = 0; $i < $this->elementTypes - 1; $i++){
-            $s = rand($this->minSpeed, $maxSpeed);
-            $this->speeds[$i] = $s >= $this->minSpeed ? $s : $this->minSpeed;
-            $maxSpeed = $maxSpeed - $s + $this->minSpeed;
-        }
-
-        $s = $this->speedSum - array_sum($this->speeds);
-        $this->speeds[$i] = $s >= $this->minSpeed ? $s : $this->minSpeed;
-
+    private function setSpeeds(){
+        $s = rand(4, 16);
+        $this->speeds[0] = $s;
+        $this->speeds[1] = 22 - $s;
     }
 
     public function setNewPosition(Track $track){
         $ce = $this->currentElement;
         $nextMove = $ce + 1;
-        $trackSegment = ceil($nextMove / $track->elementsSeries) - 1;
+        $trackSegment = ceil($nextMove / 40) - 1;
         $trackSegmentType = $track->track[$trackSegment];
         $nextTrackSegmentType = $track->track[$trackSegment + 1];
         $usedSpeed = $this->speeds[$trackSegmentType];
-        $trackSeries = $track->elementsSeries;
-
-        $trackSegmentPosition = $ce/$trackSeries;
-        $remainingSegmentElements = (ceil($trackSegmentPosition) - $trackSegmentPosition) * $trackSeries;
+        
+        $trackSegmentPosition = $ce/40;
+        $remainingSegmentElements = (ceil($trackSegmentPosition) - $trackSegmentPosition) * 40;
 
         if($remainingSegmentElements >= $usedSpeed || $trackSegmentType == $nextTrackSegmentType){
             $this->currentElement += $usedSpeed;
@@ -48,8 +32,8 @@ class Cars
             $this->currentElement += $remainingSegmentElements + 1;
         }
 
-        if($this->currentElement >= $track->trackElements){
-            $this->currentElement = $track->trackElements;
+        if($this->currentElement >= 2000){
+            $this->currentElement = 2000;
         }
 
         return $this->currentElement;
