@@ -29,4 +29,29 @@ class Cars
         $this->speeds[$i] = $s >= $this->minSpeed ? $s : $this->minSpeed;
 
     }
+
+    public function setNewPosition(Track $track){
+        $ce = $this->currentElement;
+        $nextMove = $ce + 1;
+        $trackSegment = ceil($nextMove / $track->elementsSeries) - 1;
+        $trackSegmentType = $track->track[$trackSegment];
+        $nextTrackSegmentType = $track->track[$trackSegment + 1];
+        $usedSpeed = $this->speeds[$trackSegmentType];
+        $trackSeries = $track->elementsSeries;
+
+        $trackSegmentPosition = $ce/$trackSeries;
+        $remainingSegmentElements = (ceil($trackSegmentPosition) - $trackSegmentPosition) * $trackSeries;
+
+        if($remainingSegmentElements >= $usedSpeed || $trackSegmentType == $nextTrackSegmentType){
+            $this->currentElement += $usedSpeed;
+        }else{
+            $this->currentElement += $remainingSegmentElements + 1;
+        }
+
+        if($this->currentElement >= $track->trackElements){
+            $this->currentElement = $track->trackElements;
+        }
+
+        return $this->currentElement;
+    }
 }
